@@ -327,3 +327,158 @@ pointers in C are "typed"
 
 ----------------------------------------------------------------------
 */
+
+/*
+----------------------------------------------------------------------
+
+Structures
+
+----------------------------------------------------------------------
+*/
+
+struct ComplexNumber {
+  float real;
+  float imag;
+};
+
+struct ComplexNumber ComplexAdd(struct ComplexNumber a1, struct ComplexNumber a2) {
+  struct ComplexNumber result;
+  result.real = a1.real + a2.real;
+  result.imag = a1.imag + a2.imag;
+  return result;
+}
+
+/*
+----------------------------------------------------------------------
+
+Typedef
+
+allows one to create new names for existing types
+
+typedef int * int_pt;
+int_pt x;
+int * x;
+
+----------------------------------------------------------------------
+*/
+
+typedef struct ComplexNumber {
+  float real;
+  float imag;
+} complex;
+
+complex a, *b;
+
+/*
+----------------------------------------------------------------------
+
+Parameter passing
+
+----------------------------------------------------------------------
+*/
+
+int average(int a[], int size) {
+  int i;
+  int sum;
+  for (i = 0, sum = 0; i < size; i++) { 
+    sum += a[i];
+  }
+  return sum / size;
+}
+
+int main10() {
+  int a[100];
+  printf("%d\n", average(a, 100));
+}
+
+/*
+----------------------------------------------------------------------
+
+Swapping
+
+----------------------------------------------------------------------
+*/
+
+void swap(int a[], int i, int j) {
+  // swap a[i] and a[j]
+  int temp = a[j];
+  a[j] = a[i];
+  a[i] = temp;
+}
+
+/*
+----------------------------------------------------------------------
+
+Selection Sort
+
+----------------------------------------------------------------------
+*/
+
+void selectSort(int array[], int length) {
+  int i, j, min;
+  for (i = 0; i < length; i++) {
+    // find the index of the smallest item from i onward
+    min = i;
+    for (j = i; j < length; ++j) {
+      if (array[j] < array[min]) {
+        min = j;
+      }
+    }
+    swap(array, i, min);
+  }
+}
+
+/*
+----------------------------------------------------------------------
+
+Dereferencing pointers
+
+accessing/modifying the value pointed to by a pointer
+
+----------------------------------------------------------------------
+*/
+
+int main11() {
+  int *p;
+  int a = 4;
+  p = &a;
+  printf("%d\n", *p);
+  *p = *p + 1;
+  *p = *p + 3;
+  printf("%d\n", *p);
+}
+
+// output: 8
+
+/*
+----------------------------------------------------------------------
+
+Malloc and free
+
+stdlib.h
+
+malloc: like new in C++
+  * struct node * new_node = (struct node*) malloc(sizeof(struct node));
+  * struct node * new_node = malloc(sizeof(struct node));
+  
+  * if (new_node != NULL) CONTINUE... 
+
+
+free: like delete in C++
+  * free(new_node);
+  * new_node = NULL;
+
+----------------------------------------------------------------------
+*/
+
+/*
+----------------------------------------------------------------------
+
+Arrays and Pointers
+
+array names behave like a pointer to the first element of the array in most cases!
+  * int * p = &a[0]; <==> int * p = a;
+  * a[i]; behaves like *(a + i)
+
+----------------------------------------------------------------------
+*/
