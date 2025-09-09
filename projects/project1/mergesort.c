@@ -43,6 +43,35 @@ struct node* merge(struct node *head1, struct node *head2) {
   return head;
 }
 
+// count nodes in the list
+int list_size(struct node *head) {
+  int count = 0;
+  while (head != NULL) {
+    count++;
+    head = head->next;
+  }
+  return count;
+}
+
+// recursive mergesort
+struct node* list_mergesort(struct node* head, int size) {
+  if (head == NULL || size <= 1) return head;
+
+  int size1 = size / 2;
+  int size2 = size - size1;
+
+  struct node *curr = head;
+  for (int i = 1; i < size1; i++) curr = curr->next;
+  struct node *head2 = curr->next;
+  // cut the list
+  curr->next = NULL;
+
+  struct node *sorted1 = list_mergesort(head, size1);
+  struct node *sorted2 = list_mergesort(head2, size2);
+
+  return merge(sorted1, sorted2);
+}
+
 // helper functions
 
 // appends a new node with the given value to the end of the list
@@ -69,6 +98,7 @@ void print_list(struct node *head) {
 }
 
 int main(){
+  // test merge
   // [3] -> [5] -> [9]
 	struct node *head1 = NULL;
   append_node(&head1, 3);
@@ -81,11 +111,33 @@ int main(){
   append_node(&head2, 6);
   append_node(&head2, 7);
 
+  printf("\n");
+  printf("TESTING MERGE\n");
   printf("List 1: "); print_list(head1);
   printf("List 2: "); print_list(head2);
 
   struct node *merged = merge(head1, head2);
   printf("Merged: "); print_list(merged);
+  printf("\n");
+
+  // test mergesort
+  // [5] -> [9] -> [3] -> [6] -> [7] -> [1]
+  struct node *list = NULL;
+  append_node(&list, 5);
+  append_node(&list, 9);
+  append_node(&list, 3);
+  append_node(&list, 6);
+  append_node(&list, 7);
+  append_node(&list, 1);
+
+  printf("TESTING MERGESORT\n");
+  printf("Original list:\n"); print_list(list);
+
+  int n = list_size(list);
+  struct node *sorted = list_mergesort(list, n);
+
+  printf("Sorted list:\n"); print_list(sorted);
+  printf("\n");
   
 	return 0;
 }
