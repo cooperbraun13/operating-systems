@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// had to rename to avoid conflict with libc's mergesort in <stdlib.h>, which caused "conflicting types"
 struct node* list_mergesort(struct node* head, int size);
 struct node* merge(struct node *head1, struct node *head2);
 
