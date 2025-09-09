@@ -12,6 +12,8 @@ struct node{
 
 // merge two sorted linked lists
 struct node* merge(struct node *head1, struct node *head2) {
+  if (!head1) return head2;
+  if (!head2) return head1;
   // new list head
   struct node *head = NULL;
   // last node in new list
