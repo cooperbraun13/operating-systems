@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -42,6 +41,31 @@ struct node* merge(struct node *head1, struct node *head2) {
   else if (head2 != NULL) tail->next = head2;
 
   return head;
+}
+
+// helper functions
+
+// appends a new node with the given value to the end of the list
+void append_node(struct node **head_ref, int value) {
+  struct node *new_node = malloc(sizeof(struct node));
+  newnode->data = value;
+  newnode->next = NULL;
+  if (*head_ref == NULL) {
+    *head_ref = new_node;
+    return;
+  }
+  struct node *curr = *head_ref;
+  while (curr->next != NULL) curr = curr->next;
+  curr->next = new_node;
+}
+
+// prints the list from head to tail as [data] -> ... -> NULL
+void print_list(struct node *head) {
+  while (head != NULL) {
+    printf("[%d] -> ", head->data);
+    head = head->next;
+  }
+  printf("NULL\n");
 }
 
 int main(){
