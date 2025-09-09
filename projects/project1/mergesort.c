@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct node* mergesort(struct node* head, int size);
+struct node* list_mergesort(struct node* head, int size);
 struct node* merge(struct node *head1, struct node *head2);
 
 struct node{
@@ -48,8 +48,8 @@ struct node* merge(struct node *head1, struct node *head2) {
 // appends a new node with the given value to the end of the list
 void append_node(struct node **head_ref, int value) {
   struct node *new_node = malloc(sizeof(struct node));
-  newnode->data = value;
-  newnode->next = NULL;
+  new_node->data = value;
+  new_node->next = NULL;
   if (*head_ref == NULL) {
     *head_ref = new_node;
     return;
@@ -69,6 +69,23 @@ void print_list(struct node *head) {
 }
 
 int main(){
-	printf("Hello, World!\n");
+  // [3] -> [5] -> [9]
+	struct node *head1 = NULL;
+  append_node(&head1, 3);
+  append_node(&head1, 5);
+  append_node(&head1, 9);
+
+  // [1] -> [6] -> [7]
+  struct node *head2 = NULL;
+  append_node(&head2, 1);
+  append_node(&head2, 6);
+  append_node(&head2, 7);
+
+  printf("List 1: "); print_list(head1);
+  printf("List 2: "); print_list(head2);
+
+  struct node *merged = merge(head1, head2);
+  printf("Merged: "); print_list(merged);
+  
 	return 0;
 }
