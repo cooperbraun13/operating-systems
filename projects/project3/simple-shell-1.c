@@ -141,30 +141,35 @@ int setup(char inputBuffer[], char *args[], int *background)
 
   return 1;
 
-} /* end of setup routine */
+} // end of setup routine
 
 int main(void)
 {
-  char inputBuffer[MAX_LINE];   /* buffer to hold the command entered */
-  int background;               /* equals 1 if a command is followed by '&' */
-  char *args[MAX_LINE / 2 + 1]; /* command line (of 80) has max of 40 arguments */
-  pid_t child;                  /* process id of the child process */
+  char inputBuffer[MAX_LINE];   // buffer to hold the command entered
+  int background;               // equals 1 if a command is followed by '&'
+  char *args[MAX_LINE / 2 + 1]; // command line (of 80) has max of 40 arguments
+  pid_t child;                  // process id of the child process
 
-  // define your local variables here, at the beginning of your program.
-
+  // define your local variables here, at the beginning of your program
   int shouldrun = 1;
 
   while (shouldrun)
-  { /* Program terminates normally inside setup */
+  { // program terminates normally inside setup
+
     background = 0;
 
-    shouldrun = setup(inputBuffer, args, &background); /* get next command */
+    shouldrun = setup(inputBuffer, args, &background); // get next command
 
     // fill in your code here Part I
-    /* if the user typed in "exit", the shell program will return (or terminate).
-     * Call strncmp(str1,str1,count). The function call will return 0 if str1 == str2.
-     * "count" is the number of characters we use to compare.
-     */
+    /*
+    if the user typed in "exit", the shell program will return (or terminate).
+    Call strncmp(str1,str1,count). The function call will return 0 if str1 == str2.
+    "count" is the number of characters we use to compare.
+    */
+    if (strncmp(inputBuffer, "exit", 4) == 0 && (inputBuffer[4] == '\0'))
+    {
+      return 0; // terminates shell
+    }
 
     // fill in your code here Part II
     /* if the user typed in "history", the shell program will display the history commands.
@@ -175,13 +180,47 @@ int main(void)
 
     if (shouldrun)
     {
-      /* creates a duplicate process! */
+
+      // creates a duplicate process!
       // here fill in your code
-      /* pid<0  error
-       *  pid == 0, it is the child process. use the system call execvp(args[0],args);
-       *  pid > 0, it is the parent. Here you need consider it is foreground or background
-       */
-      ;
+      /*
+      pid < 0, it is an error
+      pid == 0, it is the child process. use the system call execvp(args[0],args);
+      pid > 0, it is the parent. Here you need consider it is foreground or background
+      */
+      child = fork();
+
+      if (child < 0)
+      {
+        perror("fork failed");
+        continue;
+      }
+      else if (child == 0)
+      {
+        // child: replace with requested program
+        execvp(args[0], args);
+        // if execvp returns, an error occurred
+        perror("execvp failed");
+        _exit(1);
+      }
+      else
+      {
+        // parent: wait for child if foreground, otherwise immediately reprompt
+        if (background == 0)
+        {
+          // foreground: wait until child completes
+          if (waitpid(child, NULL, 0) < 0)
+          {
+            perror("waitpid failed");
+          }
+        }
+        else
+        {
+          // background: do not wait
+          printf("[background pid %d]\n", child);
+          fflush(stdout);
+        }
+      }
     }
   }
 
