@@ -17,9 +17,10 @@ Project 3
 
 char history[MAX_COMMANDS][MAX_LINE]; // the array used to store history commands
 char display_history[MAX_COMMANDS][MAX_LINE];
-/*the array used for "printf" to display history nicely. Remove special characters like "\n" or "\0"*/
+// the array used for "printf" to display history nicely. Remove special characters like "\n" or "\0"
 
 int command_count = 0;
+int history_start = 0; // index of the oldest entry in the circular buffer
 
 /**
  * Add the most recent command to the history.
@@ -29,8 +30,44 @@ void addtohistory(char inputBuffer[])
 {
 
   // update array"history": add the command to history, strcpy(str1,str2);
+  /*
+  Keep a circular buffer of size MAX_COMMANDS.
+  When command_count < MAX_COMMANDS: append at (history_start + command_count) % MAX_COMMANDS
+  When full: overwrite the oldest (at history_start) and advance history_start
+  */
+  int index;
+  if (command_count < MAX_COMMANDS)
+  {
+    index = (history_start + command_count) % MAX_COMMANDS;
+    command_count++;
+  }
+  else
+  {
+    index = history_start;                              // overwrite oldest
+    history_start = (history_start + 1) % MAX_COMMANDS; // advance oldest
+  }
+
+  // store raw command (including any newline that may still be present here)
+  strcpy(history[index], inputBuffer);
 
   // update array"display_history": remove characters like '\n', '\0' in order to display nicely
+  /*
+  Build a printable version without trailing newline.
+  Copy until '\0' but skip '\n' (and '\r' just in case).
+  */
+  {
+    size_t di = 0;
+    for (size_t si = 0; inputBuffer[si] != '\0' && di + 1 < MAX_LINE; ++si)
+    {
+      char c = inputBuffer[si];
+      if (c == '\n' || c == '\r')
+      {
+        continue; // drop newlines
+      }
+      display_history[index][di++] = c;
+    }
+    display_history[index][di] = '\0';
+  }
 
   return;
 }
