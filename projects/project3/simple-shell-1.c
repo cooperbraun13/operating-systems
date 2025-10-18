@@ -58,17 +58,18 @@ void addtohistory(char inputBuffer[])
   Copy until '\0' but skip '\n' (and '\r' just in case).
   */
   {
-    size_t di = 0;
-    for (size_t si = 0; inputBuffer[si] != '\0' && di + 1 < MAX_LINE; ++si)
+    // clear previous contents so no leftovers remain
+    memset(display_history[index], 0, MAX_LINE);
+
+    // length up to first newline or carriage return
+    size_t len = strcspn(history[index], "\r\n");
+    if (len >= MAX_LINE)
     {
-      char c = inputBuffer[si];
-      if (c == '\n' || c == '\r')
-      {
-        continue; // drop newlines
-      }
-      display_history[index][di++] = c;
+      len = MAX_LINE - 1;
     }
-    display_history[index][di] = '\0';
+    // copy exactly that slice, then terminate
+    memcpy(display_history[index], history[index], len);
+    display_history[index][len] = '\0';
   }
 
   return;
@@ -119,7 +120,7 @@ int setup(char inputBuffer[], char *args[], int *background)
     // a) check whether there is no history
     if (command_count == 0)
     {
-      printf("no commands in history.\n");
+      printf("No commands in history.\n");
       return 1; // keep shell running and prompt again
     }
 
@@ -142,7 +143,7 @@ int setup(char inputBuffer[], char *args[], int *background)
       int N = inputBuffer[1] - '0';
       if (N <= 0 || N > command_count || N > MAX_COMMANDS)
       {
-        printf("no such command in history.\n");
+        printf("No such command in history.\n");
         return 1; // keep shell running
       }
       int idx = (history_start + command_count - N) % MAX_COMMANDS;
@@ -156,7 +157,7 @@ int setup(char inputBuffer[], char *args[], int *background)
     else
     {
       // invalid history recall form
-      printf("no such command in history.\n");
+      printf("No such command in history.\n");
       return 1; // keep shell running
     }
   }
