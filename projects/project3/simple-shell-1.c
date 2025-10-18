@@ -254,11 +254,23 @@ int main(void)
     }
 
     // fill in your code here Part II
-    /* if the user typed in "history", the shell program will display the history commands.
-     * you will use "printf" to print the display_history
-     * after you display all the array, this command is done.
-     * Your program should go to read again, which means calling the "setup" function.
-     */
+    /*
+    if the user typed in "history", the shell program will display the history commands.
+    you will use "printf" to print the display_history
+    after you display all the array, this command is done.
+    Your program should go to read again, which means calling the "setup" function.
+    */
+    if (args[0] && strncmp(args[0], "history", 7) == 0 && args[1] == NULL)
+    {
+      // print from most to least recent, numbered 1 to command_count
+      for (int k = 0; k < command_count; ++k)
+      {
+        int idx = (history_start + command_count - 1 - k) % MAX_COMMANDS;
+        printf("%d %s\n", k + 1, display_history[idx]);
+      }
+      // do not create a process or call execvp; go back to read next command
+      continue;
+    }
 
     if (shouldrun)
     {
