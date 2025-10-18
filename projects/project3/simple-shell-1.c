@@ -11,6 +11,8 @@ Project 3
 #include <stdlib.h>
 #include <sys/types.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <ctype.h> // for isdigit
 
 #define MAX_LINE 80    // 80 chars per line, per command, should be enough
 #define MAX_COMMANDS 9 // size of history
@@ -112,19 +114,62 @@ int setup(char inputBuffer[], char *args[], int *background)
    */
 
   // fill in your code here Part II, if the user input is to repeat some history commands
-  /*if (inputBuffer[0] == '!') {
+  if (inputBuffer[0] == '!')
+  {
+    // a) check whether there is no history
+    if (command_count == 0)
+    {
+      printf("no commands in history.\n");
+      return 1; // keep shell running and prompt again
+    }
 
-  }*/
+    // b) "!!" -> most recent command
+    if (inputBuffer[1] == '!')
+    {
+      // most recent index in circular buffer
+      int idx = (history_start + command_count - 1) % MAX_COMMANDS;
+      // replace inputBuffer with the most recent history command
+      strncpy(inputBuffer, history[idx], MAX_LINE - 1);
+      inputBuffer[MAX_LINE - 1] = '\0';
+      length = (int)strlen(inputBuffer);
+      // echo the command per spec
+      printf("%s", display_history[idx]);
+      printf("\n");
+    }
+    // c) "!N" where N is a digit for the Nth most recent command
+    else if (isdigit((unsigned char)inputBuffer[1]) && inputBuffer[2] == '\n')
+    {
+      int N = inputBuffer[1] - '0';
+      if (N <= 0 || N > command_count || N > MAX_COMMANDS)
+      {
+        printf("no such command in history.\n");
+        return 1; // keep shell running
+      }
+      int idx = (history_start + command_count - N) % MAX_COMMANDS;
+      strncpy(inputBuffer, history[idx], MAX_LINE - 1);
+      inputBuffer[MAX_LINE - 1] = '\0';
+      length = (int)strlen(inputBuffer);
+      // echo the command per spec
+      printf("%s", display_history[idx]);
+      printf("\n");
+    }
+    else
+    {
+      // invalid history recall form
+      printf("no such command in history.\n");
+      return 1; // keep shell running
+    }
+  }
 
-  /**
-   * Add the command to the history
-   */
+  /*
+  Add the command to the history
+  */
   // fill in your code here Part II, add the following line for PartII
-  // addtohistory(inputBuffer);
+  addtohistory(inputBuffer);
 
-  /**
-   * Parse the contents of inputBuffer
-   */
+  /*
+  Parse the contents of inputBuffer
+  */
 
   for (i = 0; i < length; i++)
   {
