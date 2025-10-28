@@ -1,9 +1,9 @@
-/**
+/*
 Cooper Braun
 CPSC-346-01
 Project 5
 10/27/2025
- */
+*/
 
 #include <pthread.h>
 #include <stdio.h>
@@ -163,7 +163,7 @@ void *sorter(void *params)
     list[j + 1] = key;
   }
 
-  pthread_exit(0);
+  pthread_exit(params);
 }
 
 /**
@@ -208,5 +208,5 @@ void *merger(void *params)
     result[k++] = list[j++];
   }
 
-  pthread_exit(0);
+  pthread_exit(params);
 }
